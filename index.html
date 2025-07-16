@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bíblia a Mensagem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff00 0%, #6cb809 100%);
+            min-height: 100vh;
+            color: #22250b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #3e3f3d;
+            padding: 20px 10px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px #686868c9;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .navigation {
+            background: linear-gradient(135deg,#ffffff 0%,#c4d8b7 100%);
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-section {
+            margin-bottom: 18px;
+        }
+
+        .nav-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #1a1818ab;
+        }
+
+        .testament-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .testament-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #829b51;
+            background: white;
+            color:#153208;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 0.95em;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .testament-btn:hover {
+            background: #85e76713;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .testament-btn.active {
+            background: #80a040;
+            color: white;
+            box-shadow: 0 4px 12px rgba(107, 142, 35, 0.3);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .book-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 1px solid #829b51;
+            border-radius: 8px;
+            padding: 16px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+            color: #3d5425;
+            font-size: 0.9em;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+
+        .book-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-color: #6b8e23;
+        }
+
+        .book-card.selected {
+            background: linear-gradient(135deg, #3d5425 0%, #6fa611 100%);
+            color: white;
+            border-color: #556b2f;
+            box-shadow: 0 4px 15px rgba(107, 142, 35, 0.3);
+        }
+
+        .book-card.loading {
+            background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+            color: rgb(255, 255, 255);
+            border-color: #ff8f00;
+        }
+
+        .book-card.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            width: 12px;
+            height: 12px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .chapter-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .chapter-btn {
+            width: 44px;
+            height: 44px;
+            border: 2px solid #6b8e23;
+            background: white;
+            color: #6b8e23;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 0.9em;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .chapter-btn:hover {
+            background: #6b8e23;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .chapter-btn.active {
+            background: #6b8e23;
+            color: white;
+            box-shadow: 0 3px 10px rgba(107, 142, 35, 0.3);
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .content h2 {
+            color: #556b2f;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            text-align: center;
+            border-bottom: 2px solid #6b8e23;
+            padding-bottom: 10px;
+        }
+
+        .content h3 {
+            color: #6b8e23;
+            margin: 20px 0 12px 0;
+            font-size: 1.1em;
+        }
+
+        .verse {
+            margin-bottom: 12px;
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        .verse-number {
+            font-weight: bold;
+            color: #6b8e23;
+            margin-right: 6px;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px 20px;
+            color: #721c24;
+            background: #f8d7da;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #6b8e23;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 200px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn:hover {
+            background: #556b2f;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107, 142, 35, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .search-box {
+            margin-bottom: 18px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #6b8e23;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            border-color: #556b2f;
+            box-shadow: 0 0 12px rgba(107, 142, 35, 0.3);
+        }
+
+        .status {
+            text-align: center;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #e8f5e8;
+            color: #2d5a2d;
+            border: 1px solid #c3e6cb;
+        }
+
+
+        /* Melhorias para dispositivos móveis */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 15px;
+            }
+
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 10px;
+            }
+
+            .book-card {
+                padding: 12px 8px;
+                font-size: 0.85em;
+                min-height: 50px;
+            }
+
+            .testament-btn {
+                padding: 12px 16px;
+                font-size: 0.9em;
+            }
+
+            .chapter-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 0.85em;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .content h2 {
+                font-size: 1.2em;
+            }
+
+            .verse {
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .navigation-controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .nav-btn {
+                max-width: none;
+                padding: 12px 16px;
+            }
+
+            .search-input {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 8px;
+            }
+
+            .book-card {
+                padding: 10px 6px;
+                font-size: 0.8em;
+                min-height: 45px;
+            }
+
+            .chapter-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 0.8em;
+            }
+
+            .content {
+                padding: 15px 12px;
+            }
+
+            .verse {
+                font-size: 0.95em;
+            }
+
+            .testament-selector {
+                flex-direction: column;
+                gap: 6px;
+            }
+        }
+
+        /* Melhorias para toque */
+        @media (hover: none) {
+            .book-card:hover,
+            .chapter-btn:hover,
+            .testament-btn:hover,
+            .nav-btn:hover {
+                transform: none;
+            }
+
+            .book-card:active {
+                transform: scale(0.98);
+            }
+
+            .chapter-btn:active {
+                transform: scale(0.95);
+            }
+
+            .testament-btn:active,
+            .nav-btn:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(107, 142, 35, 0.6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(107, 142, 35, 0.8);
+        }
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="img/40anos.png" alt="Descrição da imagem">
+            <h1>A mensagem na ADMEC</h1>
+            <p>Distribuição da Bíblia a Mensagem sem fins lucrativos.</p>
+            <p>A Editora Vida é responsável pela publicação da tradução da Bíblia A Mensagem em português.</p>
+        </div>
+
+        <div class="navigation">
+            <div class="nav-section">
+                <div class="nav-title">Escolha um testamento</div>
+                <div class="testament-selector">
+                    <button class="testament-btn active" data-testament="old">Antigo Testamento</button>
+                    <button class="testament-btn" data-testament="new">Novo Testamento</button>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Escolha um livro</div>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="bookSearch" placeholder="Pesquisar livro...">
+                </div>
+                <div class="books-grid" id="booksGrid">
+                    <!-- Livros serão carregados aqui -->
+                </div>
+            </div>
+
+            <div class="nav-section" id="chapterSection" style="display:none;">
+                <div class="nav-title">Capítulos</div>
+                <div class="chapter-selector" id="chapterSelector">
+                    <!-- Capítulos serão carregados aqui -->
+                </div>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="loading">
+                <h3>✨ Bem-vindo ao Leitor da Bíblia</h3>
+                <p>Selecione um testamento e depois escolha um livro para começar sua leitura.</p>
+            </div>
+        </div>
+
+        <div class="navigation-controls" id="navigationControls" style="display:none;">
+            <button class="nav-btn" id="prevChapter">← Capítulo Anterior</button>
+            <button class="nav-btn" id="nextChapter">Próximo Capítulo →</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuração dos caminhos
+        const BIBLE_PATH = './biblia/';
+        const OLD_TESTAMENT_PATH = 'old-testament/';
+        const NEW_TESTAMENT_PATH = 'new-testament/';
+
+        // Estrutura de dados
+        let bibleData = { old: {}, new: {} };
+        let loadedBooks = new Set();
+        let currentTestament = 'old';
+        let currentBook = null;
+        let currentChapter = null;
+
+        // Lista dos livros da Bíblia
+        const bookNames = {
+            old: {
+                'genesis': 'Gênesis',
+                'exodo': 'Êxodo',
+                'levitico': 'Levítico',
+                'numeros': 'Números',
+                'deuteronomio': 'Deuteronômio',
+                'josue': 'Josué',
+                'juizes': 'Juízes',
+                'rute': 'Rute',
+                '1samuel': '1 Samuel',
+                '2samuel': '2 Samuel',
+                '1reis': '1 Reis',
+                '2reis': '2 Reis',
+                '1cronicas': '1 Crônicas',
+                '2cronicas': '2 Crônicas',
+                'esdras': 'Esdras',
+                'neemias': 'Neemias',
+                'ester': 'Ester',
+                'jo': 'Jó',
+                'salmos': 'Salmos',
+                'proverbios': 'Provérbios',
+                'eclesiastes': 'Eclesiastes',
+                'cantares': 'Cantares',
+                'isaias': 'Isaías',
+                'jeremias': 'Jeremias',
+                'lamentacoes': 'Lamentações',
+                'ezequiel': 'Ezequiel',
+                'daniel': 'Daniel',
+                'oseias': 'Oséias',
+                'joel': 'Joel',
+                'amos': 'Amós',
+                'obadias': 'Obadias',
+                'jonas': 'Jonas',
+                'miqueias': 'Miquéias',
+                'naum': 'Naum',
+                'habacuque': 'Habacuque',
+                'sofonias': 'Sofonias',
+                'ageu': 'Ageu',
+                'zacarias': 'Zacarias',
+                'malaquias': 'Malaquias'
+            },
+            new: {
+                'mateus': 'Mateus',
+                'marcos': 'Marcos',
+                'lucas': 'Lucas',
+                'joao': 'João',
+                'atos': 'Atos',
+                'romanos': 'Romanos',
+                '1corintios': '1 Coríntios',
+                '2corintios': '2 Coríntios',
+                'galatas': 'Gálatas',
+                'efesios': 'Efésios',
+                'filipenses': 'Filipenses',
+                'colossenses': 'Colossenses',
+                '1tessalonicenses': '1 Tessalonicenses',
+                '2tessalonicenses': '2 Tessalonicenses',
+                '1timoteo': '1 Timóteo',
+                '2timoteo': '2 Timóteo',
+                'tito': 'Tito',
+                'filemom': 'Filemom',
+                'hebreus': 'Hebreus',
+                'tiago': 'Tiago',
+                '1pedro': '1 Pedro',
+                '2pedro': '2 Pedro',
+                '1joao': '1 João',
+                '2joao': '2 João',
+                '3joao': '3 João',
+                'judas': 'Judas',
+                'apocalipse': 'Apocalipse'
+            }
+        };
+
+        // Função para carregar um livro
+        async function loadBook(testament, bookKey) {
+            const bookId = `${testament}-${bookKey}`;
+            if (loadedBooks.has(bookId)) {
+                return bibleData[testament][bookKey];
+            }
+
+            const bookCard = document.querySelector(`[data-book="${bookKey}"]`);
+            if (bookCard) {
+                bookCard.classList.add('loading');
+            }
+
+            try {
+                const testamentPath = testament === 'old' ? OLD_TESTAMENT_PATH : NEW_TESTAMENT_PATH;
+                const bookPath = `${BIBLE_PATH}${testamentPath}${bookKey}/`;
+                
+                const book = {
+                    name: bookNames[testament][bookKey] || formatBookName(bookKey),
+                    chapters: []
+                };
+                
+                // Carregar capítulos (testando até 150 capítulos)
+                for (let chapterNum = 1; chapterNum <= 150; chapterNum++) {
+                    try {
+                        const chapterPath = `${bookPath}${chapterNum}.json`;
+                        const response = await fetch(chapterPath);
+                        
+                        if (response.ok) {
+                            const chapterData = await response.json();
+                            book.chapters[chapterNum - 1] = chapterData;
+                        } else {
+                            break;
+                        }
+                    } catch (error) {
+                        break;
+                    }
+                }
+                
+                if (book.chapters.length > 0) {
+                    bibleData[testament][bookKey] = book;
+                    loadedBooks.add(bookId);
+                    
+                    if (bookCard) {
+                        bookCard.classList.remove('loading');
+                    }
+                    
+                    return book;
+                } else {
+                    throw new Error('Nenhum capítulo encontrado');
+                }
+                
+            } catch (error) {
+                console.error(`Erro ao carregar livro ${bookKey}:`, error);
+                
+                if (bookCard) {
+                    bookCard.classList.remove('loading');
+                    bookCard.style.opacity = '0.5';
+                }
+                
+                throw error;
+            }
+        }
+
+        function formatBookName(bookName) {
+            return bookName
+                .replace(/([0-9]+)([a-z])/g, '$1 $2')
+                .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        // Event listeners
+        document.getElementById('bookSearch').addEventListener('input', function(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const bookName = card.textContent.toLowerCase();
+                card.style.display = bookName.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        document.querySelectorAll('.testament-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                selectTestament(this.dataset.testament);
+            });
+        });
+
+        document.getElementById('prevChapter').addEventListener('click', navigateToPrevChapter);
+        document.getElementById('nextChapter').addEventListener('click', navigateToNextChapter);
+
+        function selectTestament(testament) {
+            currentTestament = testament;
+            
+            document.querySelectorAll('.testament-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-testament="${testament}"]`).classList.add('active');
+
+            currentBook = null;
+            currentChapter = null;
+            document.getElementById('chapterSection').style.display = 'none';
+            document.getElementById('navigationControls').style.display = 'none';
+            
+            updateBooksGrid();
+            updateContent();
+        }
+
+        function updateBooksGrid() {
+            const grid = document.getElementById('booksGrid');
+            const books = bookNames[currentTestament];
+            
+            grid.innerHTML = '';
+            
+            Object.keys(books).forEach(bookKey => {
+                const bookCard = document.createElement('button');
+                bookCard.className = 'book-card';
+                bookCard.textContent = books[bookKey];
+                bookCard.dataset.book = bookKey;
+                bookCard.addEventListener('click', () => selectBook(bookKey));
+                grid.appendChild(bookCard);
+            });
+        }
+
+        async function selectBook(bookKey) {
+            document.querySelectorAll('.book-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            const bookCard = document.querySelector(`[data-book="${bookKey}"]`);
+            if (bookCard) {
+                bookCard.classList.add('selected');
+            }
+
+            try {
+                await loadBook(currentTestament, bookKey);
+                
+                currentBook = bookKey;
+                currentChapter = null;
+                
+                updateChapterSelector();
+                document.getElementById('chapterSection').style.display = 'block';
+                
+                if (bibleData[currentTestament][currentBook].chapters.length > 0) {
+                    selectChapter(1);
+                }
+                
+            } catch (error) {
+                const content = document.getElementById('content');
+                content.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Erro ao carregar o livro</h3>
+                        <p>Não foi possível carregar o livro ${bookNames[currentTestament][bookKey]}. Verifique se os arquivos estão no local correto.</p>
+                        <p><strong>Caminho esperado:</strong> ${BIBLE_PATH}${currentTestament === 'old' ? OLD_TESTAMENT_PATH : NEW_TESTAMENT_PATH}${bookKey}/1.json</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateChapterSelector() {
+            const selector = document.getElementById('chapterSelector');
+            const book = bibleData[currentTestament][currentBook];
+            
+            selector.innerHTML = '';
+            
+            book.chapters.forEach((chapter, index) => {
+                if (chapter && chapter.length > 0) {
+                    const chapterBtn = document.createElement('button');
+                    chapterBtn.className = 'chapter-btn';
+                    chapterBtn.textContent = index + 1;
+                    chapterBtn.addEventListener('click', () => selectChapter(index + 1));
+                    selector.appendChild(chapterBtn);
+                }
+            });
+        }
+
+        function selectChapter(chapterNumber) {
+            currentChapter = chapterNumber;
+            
+            document.querySelectorAll('.chapter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.textContent) === chapterNumber) {
+                    btn.classList.add('active');
+                }
+            });
+
+            updateContent();
+            updateNavigationControls();
+        }
+
+        function updateContent() {
+            const content = document.getElementById('content');
+            
+            if (!currentBook || !currentChapter) {
+                content.innerHTML = `
+                    <div class="loading">
+                        <h3>📚 Selecione um livro e capítulo</h3>
+                        <p>Escolha um livro na lista acima para começar a leitura das Escrituras.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const book = bibleData[currentTestament][currentBook];
+            const chapter = book.chapters[currentChapter - 1];
+            
+            if (!chapter || chapter.length === 0) {
+                content.innerHTML = '<div class="error"><h3>❌ Capítulo não encontrado</h3></div>';
+                return;
+            }
+            
+            let html = `<h2>${book.name} - Capítulo ${currentChapter}</h2>`;
+            
+            let currentTitle = '';
+            chapter.forEach(verse => {
+                if (verse.title && verse.title !== currentTitle) {
+                    currentTitle = verse.title;
+                    html += `<h3>${currentTitle}</h3>`;
+                }
+                
+                html += `<div class="verse">
+                    <span class="verse-number">${verse.number}</span>
+                    ${verse.content}
+                </div>`;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        function updateNavigationControls() {
+            const controls = document.getElementById('navigationControls');
+            const prevBtn = document.getElementById('prevChapter');
+            const nextBtn = document.getElementById('nextChapter');
+            
+            if (currentBook && currentChapter) {
+                controls.style.display = 'flex';
+                
+                const book = bibleData[currentTestament][currentBook];
+                const totalChapters = book.chapters.filter(chapter => chapter && chapter.length > 0).length;
+                
+                prevBtn.disabled = currentChapter <= 1;
+                nextBtn.disabled = currentChapter >= totalChapters;
+            } else {
+                controls.style.display = 'none';
+            }
+        }
+
+        function navigateToPrevChapter() {
+            if (currentChapter > 1) {
+                selectChapter(currentChapter - 1);
+            }
+        }
+
+        function navigateToNextChapter() {
+            const book = bibleData[currentTestament][currentBook];
+            const totalChapters = book.chapters.filter(chapter => chapter && chapter.length > 0).length;
+            if (currentChapter < totalChapters) {
+                selectChapter(currentChapter + 1);
+            }
+        }
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(event) {
+            if (currentBook && currentChapter) {
+                if (event.key === 'ArrowLeft' && event.ctrlKey) {
+                    event.preventDefault();
+                    navigateToPrevChapter();
+                } else if (event.key === 'ArrowRight' && event.ctrlKey) {
+                    event.preventDefault();
+                    navigateToNextChapter();
+                }
+            }
+        });
+
+        // Inicializar
+        window.addEventListener('load', function() {
+            updateBooksGrid();
+            updateContent();
+        });
+    </script>
+</body>
+</html>
